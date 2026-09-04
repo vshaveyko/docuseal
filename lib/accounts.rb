@@ -117,7 +117,7 @@ module Accounts
         return Docuseal.default_pkcs if Docuseal::CERTS.present?
 
         EncryptedConfig.find_by(account:, key: EncryptedConfig::ESIGN_CERTS_KEY)&.value ||
-          EncryptedConfig.find_by(key: EncryptedConfig::ESIGN_CERTS_KEY).value
+          ensure_signing_certs(account)
       end
 
     if (default_cert = cert_data['custom']&.find { |e| e['status'] == 'default' })
@@ -129,6 +129,29 @@ module Accounts
     else
       GenerateCertificate.load_pkcs(cert_data)
     end
+  end
+
+  # The signing certificate chain is created once, by the /setup wizard. A
+  # deployment that provisions its accounts another way (the internal
+  # provisioning API), or one restored onto a fresh database, never gets that
+  # row — and the old fallback called `.value` on the nil `find_by`, so every
+  # completed submission died generating its signed PDF. Generate and persist
+  # the chain on first use, exactly as setup does, so signing is self-healing.
+  def ensure_signing_certs(account)
+    existing = EncryptedConfig.find_by(key: EncryptedConfig::ESIGN_CERTS_KEY)
+
+    return existing.value if existing
+
+    # String keys, matching what the JSON-serialized column reads back as —
+    # `load_pkcs` indexes it with strings.
+    value = GenerateCertificate.call.transform_values(&:to_pem).stringify_keys
+
+    EncryptedConfig.create!(account:, key: EncryptedConfig::ESIGN_CERTS_KEY, value:)
+
+    value
+  rescue ActiveRecord::RecordNotUnique
+    # Another request generated one first — take theirs.
+    EncryptedConfig.find_by!(key: EncryptedConfig::ESIGN_CERTS_KEY).value
   end
 
   def load_timeserver_url(account)
