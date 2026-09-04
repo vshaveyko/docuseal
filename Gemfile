@@ -38,6 +38,7 @@ gem 'rqrcode', require: false
 gem 'ruby-vips'
 gem 'rubyXL', require: false
 gem 'shakapacker'
+gem 'shipeasy-sdk'
 gem 'sidekiq'
 gem 'sqlite3', require: false
 gem 'strip_attributes'
