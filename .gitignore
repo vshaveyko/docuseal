@@ -1,4 +1,5 @@
 /.bundle
+/vendor/bundle
 
 /db/*.sqlite3
 /db/*.sqlite3-*
@@ -38,3 +39,6 @@ yarn-debug.log*
 /ee
 dump.rdb
 *.onnx
+
+# Shipeasy CLI project binding (org-specific ids stay out of the fork)
+/.shipeasy
