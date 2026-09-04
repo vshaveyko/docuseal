@@ -19,7 +19,18 @@ aws_s3:
 
 google:
   service: GCS
-  credentials: <%= ENV['GCS_CREDENTIALS'] || '{}' %>
+<% if ENV['GCS_CREDENTIALS'].present? && ENV['GCS_CREDENTIALS'] != '{}' %>
+  credentials: <%= ENV['GCS_CREDENTIALS'] %>
+<% elsif ENV['GCS_GSA_EMAIL'].present? %>
+  # Keyless URL signing via the IAM SignBlob API — no key file. When the
+  # container authenticates through the GCE metadata server (no private key),
+  # ActiveStorage otherwise raises Google::Cloud::Storage::SignedUrlUnavailable
+  # on every `signed_url`. Set GCS_GSA_EMAIL to the runtime service account,
+  # which must be able to signBlob on itself
+  # (roles/iam.serviceAccountTokenCreator).
+  iam: true
+  gsa_email: <%= ENV['GCS_GSA_EMAIL'] %>
+<% end %>
   project: <%= ENV['GCS_PROJECT'] %>
   bucket: <%= ENV['GCS_BUCKET'] %>
   public: <%= ENV['ACTIVE_STORAGE_PUBLIC'] == 'true' %>
