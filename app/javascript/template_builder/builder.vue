@@ -76,7 +76,7 @@
       </div>
     </div>
     <div
-      v-if="$slots.buttons || withTitle"
+      v-if="($slots.buttons || withTitle) && !isEmbedded"
       id="title_container"
       class="flex justify-between py-1.5 items-center pr-4 top-0 z-10 title-container"
       :class="{ sticky: withStickySubmitters || isBreakpointLg }"
@@ -1155,6 +1155,9 @@ export default {
     fieldsDragFieldRef: () => ref(),
     customDragFieldRef: () => ref(),
     selectedAreasRef: () => ref([]),
+    isEmbedded () {
+      return typeof window !== 'undefined' && window.parent !== window
+    },
     attachmentUuidsIndex () {
       return this.template.schema.reduce((acc, e, index) => {
         acc[e.attachment_uuid] = index
@@ -3283,6 +3286,10 @@ export default {
         Promise.all([this.save({ force: true }), ...dynamicDocumentSaves]).then(() => {
           if (this.withRevisions) {
             this.captureRevision()
+          }
+
+          if (window.parent !== window) {
+            window.parent.postMessage({ source: 'docuseal-embed', type: 'save', template_id: this.template.id }, '*')
           }
 
           window.Turbo.visit(`/templates/${this.template.id}`)

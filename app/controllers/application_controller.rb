@@ -15,6 +15,11 @@ class ApplicationController < ActionController::Base
 
   before_action :set_csp, if: -> { request.get? && !request.headers['HTTP_X_TURBO'] }
 
+  # Confines token-bootstrapped embed sessions to their own template. No-op for
+  # ordinary sessions. Included last so `enforce_embed_scope!` runs after
+  # `authenticate_user!`.
+  include EmbedScoped
+
   helper_method :button_title,
                 :current_account,
                 :true_ability,
@@ -141,6 +146,15 @@ class ApplicationController < ActionController::Base
       policy.connect_src :self
 
       policy.directives['connect-src'] << 'ws:' if Rails.env.development?
+
+      # Allow the embedding app(s) to iframe this DocuSeal instance. Required
+      # by the self-hosted JWT embed (embed_scripts_controller.rb + the
+      # token-auth EmbedBuilderController). EMBED_ALLOWED_ORIGIN may list
+      # several space-separated origins (e.g. an apex plus an app subdomain:
+      # "https://example.com https://app.example.com") — each becomes its own
+      # frame-ancestors source.
+      embed_origins = ENV['EMBED_ALLOWED_ORIGIN'].to_s.split
+      policy.frame_ancestors(:self, *embed_origins) if embed_origins.any?
     end
   end
 end
