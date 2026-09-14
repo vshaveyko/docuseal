@@ -40,6 +40,7 @@
               <%= form_for '', url: templates_upload_path, method: :post do |f| %>
                 <input type="hidden" name="url" value="<%= params[:url] %>">
                 <input type="hidden" name="filename" value="<%= params[:filename] %>">
+                <input type="hidden" name="external_id" value="<%= params[:external_id] %>">
                 <%= f.button button_title(title: t('open')), class: 'base-button w-44' %>
               <% end %>
             </div>

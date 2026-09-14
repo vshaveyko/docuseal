@@ -48,6 +48,25 @@ module EmbedScoped
 
   private
 
+  # The external_id the embed token was issued for, or nil outside an embed
+  # session. The seed-from-URL flow (`/new` -> create -> `/templates/:id/edit`)
+  # needs it: the token names the template the embedder is about to create, and
+  # only the session carries that name across the create.
+  def embed_scope_external_id
+    session[SESSION_KEY].presence&.dig('external_id').presence
+  end
+
+  # Pin the scope to a template this embed session just created, so the editor
+  # it redirects into is in scope even when the external_id never round-tripped
+  # through the create form. Only ever narrows to a template the session itself
+  # produced; a no-op outside an embed session.
+  def pin_embed_scope_to_template!(template)
+    scope = session[SESSION_KEY].presence
+    return if scope.blank?
+
+    session[SESSION_KEY] = scope.merge('template_id' => template.id)
+  end
+
   def enforce_embed_scope!
     scope = session[SESSION_KEY]
     return if scope.blank?

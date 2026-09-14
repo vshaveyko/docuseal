@@ -31,6 +31,8 @@ class TemplatesUploadsController < ApplicationController
 
     SearchEntries.enqueue_reindex(@template)
 
+    pin_embed_scope_to_template!(@template)
+
     redirect_to edit_template_path(@template)
   rescue Templates::CreateAttachments::PdfEncrypted
     render turbo_stream: turbo_stream.append(params[:form_id], html: helpers.tag.prompt_password)
@@ -52,7 +54,12 @@ class TemplatesUploadsController < ApplicationController
     # Persist the embedder-supplied external_id so the host app can later
     # query `/api/templates?external_id=...` to reconcile its own record
     # with this template (used by the consent-template fallback link path).
-    template.external_id = params[:external_id] if params[:external_id].present?
+    # The embed session is the fallback source: the confirm-upload page posts
+    # back only url + filename, so on that branch the token's external_id would
+    # otherwise be lost — leaving the new template outside the embed scope and
+    # unlinkable from the `template.created` webhook.
+    external_id = params[:external_id].presence || embed_scope_external_id
+    template.external_id = external_id if external_id
 
     Templates.maybe_assign_access(template)
 

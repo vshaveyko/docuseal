@@ -139,4 +139,73 @@ describe 'Embed builder' do
       end
     end
   end
+
+  describe 'seed-from-URL flow (/new -> create -> edit)' do
+    let(:pdf) { Rails.root.join('spec/fixtures/sample-document.pdf').read }
+
+    before do
+      stub_request(:get, 'https://example.com/doc.pdf')
+        .to_return(body: pdf, headers: { 'Content-Type' => 'application/pdf' })
+    end
+
+    # The embedder seeds a brand-new template from a document URL: the token
+    # carries `external_id` (its handle on the template) but no `template_id`
+    # yet, so the embed scope can only be pinned by external_id. The upstream
+    # confirm page posts back `url` + `filename` ONLY — it drops the
+    # `external_id` — so the template used to be created without one and the
+    # editor it redirects to fell outside the scope: a bare 403 the moment the
+    # clinic tried to place fields on a freshly uploaded document.
+    it 'stamps the embed external_id on the created template and opens its editor' do
+      get embed_builder_path, params: {
+        token: token(document_urls: ['https://example.com/doc.pdf'], name: 'Consent Form', external_id: 'ext-seed')
+      }
+      expect(response).to have_http_status(:found)
+
+      post templates_upload_path, params: { url: 'https://example.com/doc.pdf', filename: 'Consent_Form.pdf' }
+
+      template = Template.order(:id).last
+      expect(template.external_id).to eq('ext-seed')
+      expect(response).to redirect_to(edit_template_path(template))
+
+      begin
+        get edit_template_path(template)
+        expect(response).not_to have_http_status(:forbidden)
+      rescue ActionView::Template::Error, Shakapacker::Manifest::MissingEntryError
+        # Reached view rendering => the scope guard allowed the new template.
+      end
+    end
+
+    # Belt and braces on the same failure: even when the external_id never
+    # round-trips (an upstream view that drops it, a caller that omits it),
+    # the session that created the template may edit it.
+    it 'pins the embed scope to the template the session just created' do
+      get embed_builder_path, params: {
+        token: token(document_urls: ['https://example.com/doc.pdf'], name: 'Consent Form')
+      }
+
+      post templates_upload_path, params: { url: 'https://example.com/doc.pdf', filename: 'Consent_Form.pdf' }
+
+      template = Template.order(:id).last
+
+      begin
+        get edit_template_path(template)
+        expect(response).not_to have_http_status(:forbidden)
+      rescue ActionView::Template::Error, Shakapacker::Manifest::MissingEntryError
+        # Reached view rendering => the scope guard allowed the new template.
+      end
+    end
+
+    it 'still refuses a template the embed session did not create' do
+      theirs = create(:template, account:, author: user, external_id: 'theirs')
+
+      get embed_builder_path, params: {
+        token: token(document_urls: ['https://example.com/doc.pdf'], name: 'Consent Form', external_id: 'ext-seed')
+      }
+      post templates_upload_path, params: { url: 'https://example.com/doc.pdf', filename: 'Consent_Form.pdf' }
+
+      get edit_template_path(theirs)
+
+      expect(response).to have_http_status(:forbidden)
+    end
+  end
 end
