@@ -2,6 +2,10 @@
 
 module Api
   class SubmittersController < ApiBaseController
+    # Preferences an update copies straight across when the caller sends them.
+    ASSIGNABLE_PREFERENCE_KEYS = %w[send_email send_sms reply_to require_phone_2fa require_email_2fa
+                                    go_to_last completed_redirect_url email_message_uuid].freeze
+
     load_and_authorize_resource :submitter
 
     before_action :maybe_return_submitter_error, only: :update
@@ -92,6 +96,7 @@ module Api
         :send_email, :send_sms, :reply_to, :completed_redirect_url, :uuid, :name, :email, :role,
         :completed, :phone, :application_key, :external_id, :go_to_last, :require_phone_2fa, :require_email_2fa,
         { metadata: {}, values: {}, readonly_fields: [], message: %i[subject body],
+          completed_button: %i[title url],
           fields: [[:name, :uuid, :default_value, :value, :required,
                     :readonly, :validation_pattern, :invalid_message,
                     { default_value: [], value: [], preferences: {} }]] }
@@ -203,32 +208,11 @@ module Api
 
       submitter.preferences['default_values'] = attrs[:values].to_unsafe_h if attrs[:values].present?
 
-      if submitter_preferences.key?('send_email')
-        submitter.preferences['send_email'] = submitter_preferences['send_email']
+      ASSIGNABLE_PREFERENCE_KEYS.each do |key|
+        submitter.preferences[key] = submitter_preferences[key] if submitter_preferences.key?(key)
       end
 
-      submitter.preferences['send_sms'] = submitter_preferences['send_sms'] if submitter_preferences.key?('send_sms')
-      submitter.preferences['reply_to'] = submitter_preferences['reply_to'] if submitter_preferences.key?('reply_to')
-
-      if submitter_preferences.key?('require_phone_2fa')
-        submitter.preferences['require_phone_2fa'] = submitter_preferences['require_phone_2fa']
-      end
-
-      if submitter_preferences.key?('require_email_2fa')
-        submitter.preferences['require_email_2fa'] = submitter_preferences['require_email_2fa']
-      end
-
-      if submitter_preferences.key?('go_to_last')
-        submitter.preferences['go_to_last'] = submitter_preferences['go_to_last']
-      end
-
-      if submitter_preferences.key?('completed_redirect_url')
-        submitter.preferences['completed_redirect_url'] = submitter_preferences['completed_redirect_url']
-      end
-
-      return unless submitter_preferences.key?('email_message_uuid')
-
-      submitter.preferences['email_message_uuid'] = submitter_preferences['email_message_uuid']
+      Submitters.assign_completed_button(submitter.preferences, submitter_preferences)
 
       submitter
     end

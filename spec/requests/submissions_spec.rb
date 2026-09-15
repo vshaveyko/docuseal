@@ -102,6 +102,24 @@ describe 'Submission API' do
       expect(response.parsed_body).to eq(JSON.parse(create_submission_body(submission).to_json))
     end
 
+    it 'stores the completed button on the submitter preferences' do
+      post '/api/submissions', headers: { 'x-auth-token': author.access_token.token }, params: {
+        template_id: templates[0].id,
+        submitters: [
+          { role: 'First Party', email: 'john.doe@example.com',
+            completed_button: { title: 'Next document', url: 'https://example.com/next' } }
+        ]
+      }.to_json
+
+      expect(response).to have_http_status(:ok)
+
+      submitter = Submission.last.submitters.first
+
+      expect(submitter.preferences['completed_button']).to eq(
+        'title' => 'Next document', 'url' => 'https://example.com/next'
+      )
+    end
+
     it 'creates a submission when the submitter is marked as completed' do
       post '/api/submissions', headers: { 'x-auth-token': author.access_token.token }, params: {
         template_id: templates[0].id,

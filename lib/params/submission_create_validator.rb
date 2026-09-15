@@ -42,6 +42,7 @@ module Params
       boolean(params, :send_sms)
       type(params, :order, String)
       type(params, :completed_redirect_url, String)
+      type(params, :completed_button, Hash)
       type(params, :bcc_completed, String)
       type(params, :reply_to, String)
       email_format(params, :bcc_completed, message: 'bcc_completed email is invalid')
@@ -92,6 +93,7 @@ module Params
       boolean(submitter_params, :send_email)
       boolean(submitter_params, :send_sms)
       type(submitter_params, :completed_redirect_url, String)
+      type(submitter_params, :completed_button, Hash)
       type(submitter_params, :fields, Array)
 
       in_path_each(submitter_params, :fields) do |field_params|
@@ -112,6 +114,7 @@ module Params
       boolean(params, :send_sms)
       type(params, :order, String)
       type(params, :completed_redirect_url, String)
+      type(params, :completed_button, Hash)
       type(params, :bcc_completed, String)
       email_format(params, :bcc_completed, message: 'bcc_completed email is invalid')
       type(params, :message, Hash)

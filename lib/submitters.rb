@@ -161,6 +161,15 @@ module Submitters
     preferences['go_to_last'] = params['go_to_last'] if params.key?('go_to_last')
     preferences['completed_redirect_url'] = params['completed_redirect_url'] if params.key?('completed_redirect_url')
 
+    assign_completed_button(preferences, params)
+  end
+
+  # The button the completed form offers instead of redirecting: `{ title:, url: }`.
+  # Kept out of `normalize_preferences` so both it and the submitter update path
+  # read the same shape out of either raw params or normalized preferences.
+  def assign_completed_button(preferences, params)
+    preferences['completed_button'] = params['completed_button']&.to_h if params.key?('completed_button')
+
     preferences
   end
 
