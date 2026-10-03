@@ -138,8 +138,16 @@
           <% lazyload_metadata = document.preview_images.last&.metadata || Templates::ProcessDocument::US_LETTER_SIZE %>
           <% (document.metadata.dig('pdf', 'number_of_pages') || (document.preview_images.loaded? ? preview_images_index.size : document.preview_images.size)).times do |index| %>
             <% page = preview_images_index[index] || page_blob_struct.new(metadata: lazyload_metadata, url: preview_document_page_path(document.signed_key, "#{index}#{Templates::ProcessDocument::PREVIEW_FORMAT}")) %>
-            <page-container class="block relative my-4 shadow-md" style="container-type: size; aspect-ratio: <%= width = page.metadata['width'] %> / <%= height = page.metadata['height'] %>">
-              <img loading="lazy" src="<%= page.is_a?(ActiveStorage::Attachment) ? page.url(time: service_url_time) : page.url %>" width="<%= width %>" height="<%= height %>" alt="<%= "#{item['name']} - #{t('page')} #{index + 1}" %>">
+            <page-container class="block relative my-4 shadow-md" style="container-type: size; aspect-ratio: <%= width = page.metadata['width'] %> / <%= height = page.metadata['height'] %>" aria-busy="true">
+              <div data-target="page-container.placeholder" role="status" class="absolute top-0 bottom-0 left-0 right-0 flex flex-col items-center justify-center gap-2 bg-base-200 text-base-content/60 animate-pulse">
+                <%= svg_icon('loader', class: 'w-6 h-6 animate-spin') %>
+                <span><%= t('loading_document') %></span>
+              </div>
+              <img class="relative" loading="lazy" src="<%= page.is_a?(ActiveStorage::Attachment) ? page.url(time: service_url_time) : page.url %>" width="<%= width %>" height="<%= height %>" alt="<%= "#{item['name']} - #{t('page')} #{index + 1}" %>">
+              <div data-target="page-container.error" role="alert" class="hidden absolute top-0 bottom-0 left-0 right-0 z-10 flex-col items-center justify-center gap-3 p-4 text-center bg-base-200">
+                <span><%= t('this_page_could_not_be_loaded') %></span>
+                <button type="button" data-target="page-container.retryButton" class="btn btn-sm btn-neutral text-white"><%= t('try_again') %></button>
+              </div>
               <div id="page-<%= [document.uuid, index].join('-') %>" class="top-0 bottom-0 left-0 right-0 absolute">
                 <% if annots = document_annots_index[index] %>
                   <%= render 'submit_form/annotations', annots: %>

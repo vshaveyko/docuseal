@@ -201,6 +201,9 @@ en: &en
   downloading: Downloading
   download: Download
   page: Page
+  loading_document: Loading document...
+  this_page_could_not_be_loaded: This page could not be loaded.
+  try_again: Try again
   decline: Decline
   declined: Declined
   delegate: Delegate
@@ -1323,6 +1326,9 @@ es: &es
   downloading: Descargando
   download: Descargar
   page: Página
+  loading_document: Cargando documento...
+  this_page_could_not_be_loaded: No se pudo cargar esta página.
+  try_again: Intentar de nuevo
   decline: Rechazar
   delegate: Delegar
   enter_the_email_address_of_the_person_you_want_to_delegate_to: Ingresa la dirección de correo electrónico de la persona a quien deseas delegar
@@ -2456,6 +2462,9 @@ it: &it
   downloading: Scaricamento
   download: Scarica
   page: Pagina
+  loading_document: Caricamento del documento...
+  this_page_could_not_be_loaded: Impossibile caricare questa pagina.
+  try_again: Riprova
   decline: Rifiuta
   delegate: Delega
   enter_the_email_address_of_the_person_you_want_to_delegate_to: Inserisci l'indirizzo email della persona a cui vuoi delegare
@@ -3575,6 +3584,9 @@ fr: &fr
   downloading: Téléchargement
   download: Télécharger
   page: Page
+  loading_document: Chargement du document...
+  this_page_could_not_be_loaded: Impossible de charger cette page.
+  try_again: Réessayer
   decline: Refuser
   delegate: Déléguer
   enter_the_email_address_of_the_person_you_want_to_delegate_to: Saisissez l'adresse e-mail de la personne à qui vous souhaitez déléguer
@@ -4704,6 +4716,9 @@ pt: &pt
   downloading: Baixando
   download: Baixar
   page: Página
+  loading_document: Carregando documento...
+  this_page_could_not_be_loaded: Não foi possível carregar esta página.
+  try_again: Tentar novamente
   decline: Recusar
   delegate: Delegar
   enter_the_email_address_of_the_person_you_want_to_delegate_to: Insira o endereço de e-mail da pessoa para quem deseja delegar
@@ -5836,6 +5851,9 @@ de: &de
   downloading: Wird heruntergeladen
   download: Download
   page: Seite
+  loading_document: Dokument wird geladen...
+  this_page_could_not_be_loaded: Diese Seite konnte nicht geladen werden.
+  try_again: Erneut versuchen
   decline: Ablehnen
   delegate: Delegieren
   enter_the_email_address_of_the_person_you_want_to_delegate_to: Geben Sie die E-Mail-Adresse der Person ein, an die Sie delegieren möchten
@@ -6806,6 +6824,9 @@ pl:
   hi_there: Cześć,
   download: Pobierz
   page: Strona
+  loading_document: Ładowanie dokumentu...
+  this_page_could_not_be_loaded: Nie udało się załadować tej strony.
+  try_again: Spróbuj ponownie
   decline: Odrzuć
   delegate: Deleguj
   enter_the_email_address_of_the_person_you_want_to_delegate_to: Wprowadź adres e-mail osoby, do której chcesz delegować
@@ -6946,6 +6967,9 @@ uk:
   hi_there: Привіт,
   download: Завантажити
   page: Сторінка
+  loading_document: Завантаження документа...
+  this_page_could_not_be_loaded: Не вдалося завантажити цю сторінку.
+  try_again: Спробувати ще раз
   decline: Відхилити
   delegate: Делегувати
   enter_the_email_address_of_the_person_you_want_to_delegate_to: Введіть адресу електронної пошти особи, якій ви хочете делегувати
@@ -7086,6 +7110,9 @@ cs:
   hi_there: Ahoj,
   download: Stáhnout
   page: Stránka
+  loading_document: Načítání dokumentu...
+  this_page_could_not_be_loaded: Tuto stránku se nepodařilo načíst.
+  try_again: Zkusit znovu
   decline: Odmítnout
   delegate: Delegovat
   enter_the_email_address_of_the_person_you_want_to_delegate_to: Zadejte e-mailovou adresu osoby, na kterou chcete delegovat
@@ -7212,6 +7239,9 @@ he:
   hi_there: שלום
   download: הורד
   page: עמוד
+  loading_document: טוען מסמך...
+  this_page_could_not_be_loaded: לא ניתן היה לטעון את העמוד הזה.
+  try_again: נסה שוב
   decline: דחייה
   delegate: האצלה
   enter_the_email_address_of_the_person_you_want_to_delegate_to: הזן את כתובת הדוא"ל של האדם שברצונך להאציל אליו
@@ -7488,6 +7518,9 @@ nl: &nl
   downloading: Downloaden
   download: Downloaden
   page: Pagina
+  loading_document: Document laden...
+  this_page_could_not_be_loaded: Deze pagina kon niet worden geladen.
+  try_again: Opnieuw proberen
   decline: Weigeren
   delegate: Delegeren
   enter_the_email_address_of_the_person_you_want_to_delegate_to: Voer het e-mailadres in van de persoon aan wie u wilt delegeren
@@ -8441,6 +8474,9 @@ ar:
   hi_there: مرحبًا،
   download: تحميل
   page: صفحة
+  loading_document: جارٍ تحميل المستند...
+  this_page_could_not_be_loaded: تعذر تحميل هذه الصفحة.
+  try_again: حاول مرة أخرى
   decline: رفض
   delegate: تفويض
   enter_the_email_address_of_the_person_you_want_to_delegate_to: أدخل عنوان البريد الإلكتروني للشخص الذي تريد التفويض إليه
@@ -8553,6 +8589,9 @@ ko:
   hi_there: 안녕하세요,
   download: 다운로드
   page: 페이지
+  loading_document: 문서를 불러오는 중...
+  this_page_could_not_be_loaded: 이 페이지를 불러올 수 없습니다.
+  try_again: 다시 시도
   decline: 거절
   delegate: 위임
   enter_the_email_address_of_the_person_you_want_to_delegate_to: 위임할 사람의 이메일 주소를 입력하세요
@@ -8665,6 +8704,9 @@ ja:
   hi_there: こんにちは
   download: ダウンロード
   page: ページ
+  loading_document: ドキュメントを読み込み中...
+  this_page_could_not_be_loaded: このページを読み込めませんでした。
+  try_again: 再試行
   decline: 辞退
   delegate: 委任
   enter_the_email_address_of_the_person_you_want_to_delegate_to: 委任したい人のメールアドレスを入力してください
