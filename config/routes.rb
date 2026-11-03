@@ -38,6 +38,7 @@ Rails.application.routes.draw do
     end
     resources :templates, only: %i[update show index destroy] do
       resources :clone, only: %i[create], controller: 'templates_clone'
+      resources :detect_fields, only: %i[create], controller: 'templates_detect_fields' unless Docuseal.multitenant?
       resources :submissions, only: %i[index create]
     end
     resources :tools, only: %i[] do
